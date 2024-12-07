@@ -120,7 +120,7 @@ const Ideainput = () => {
     console.log(errors);
     }
     try {
-      const response = await axios.post(`${BACKEND_URL}register_idea.php`, formData, {
+      const response = await axios.post(`${BACKEND_URL}/register_idea.php`, formData, {
         withCredentials: true,
       });
 
