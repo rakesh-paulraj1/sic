@@ -29,48 +29,42 @@ export function Login() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const adminResponse = await axios.post(`${BACKEND_URL}/signin_admin.php`, formData, {
+      const response = await axios.post(`${BACKEND_URL}signin.php`, formData, {
         withCredentials: true,
       });
-
-      if (adminResponse.data.message === "Signin successful") {
-        const { role, token } = adminResponse.data;
-        if (role === "admin" && token) {
-          localStorage.setItem("role", role);
-          localStorage.setItem("auth_token", token);
-          toast.success("Admin Logged In Successfully!", { position: "top-right" });
-          navigate("/admindashboard");
-          return;
-        }
+  
+      console.log(response.data);
+      const { role, id } = response.data;
+  
+      localStorage.setItem("role", role);
+      localStorage.setItem("user_id", id || "");
+  
+      // Check for admin role
+      if (role === "admin") {
+        navigate("/admindashboard");
+        toast.success("Admin Logged In Successfully!", { position: "top-right" });
+        setTimeout(() => navigate("/admindashboard"), 500);
+      } 
+      // Check for evaluator role
+      else if (role === "evaluator") {
+        navigate("/evaluatordashboard")
+        toast.success("Evaluator Logged In Successfully!", { position: "top-right" });
+        setTimeout(() => navigate("/evaluatordashboard"), 500);
+      } 
+      // If role is neither admin nor evaluator, show error
+      else {
+        toast.error("Invalid Credentials. Please check your email or password.", {
+          position: "top-right",
+        });
       }
-
-      const evaluatorResponse = await axios.post(`${BACKEND_URL}/signin_evaluator.php`, formData, {
-        withCredentials: true,
-      });
-
-      if (evaluatorResponse.data.message === "Signin successful!") {
-        const { role, token, id } = evaluatorResponse.data;
-        if (role === "evaluator" && token) {
-          localStorage.setItem("role", role);
-          localStorage.setItem("auth_token1", token);
-          localStorage.setItem("evaluator_id", id || "");
-          toast.success("Evaluator Logged In Successfully!", { position: "top-right" });
-          navigate("/evaluatordashboard");
-          return;
-        }
-      }
-      
-
-      toast.error("Invalid Credentials. Please check your email or password.", {
-        position: "top-right",
-      });
     } catch (error: any) {
       console.error("Login Error:", error);
       const errorMessage =
-        error.response?.data?.message || "An unexpected error occurred. Please try again.";
+        error.response?.data?.error || "An unexpected error occurred. Please try again.";
       toast.error(errorMessage, { position: "top-right" });
     }
   };
+  
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
