@@ -3,13 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import { BACKEND_URL } from '../../../config';
 import axios from 'axios';
 import { User2Icon } from 'lucide-react';
+import Cookies from "js-cookie";
 const ProfileDropdown = ({ userName }: { userName: string }) => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const navigate = useNavigate();
+    
 
     const handleLogout = async () => {
         try {
-            const response = await axios.post(`${BACKEND_URL}logout.php`, {}, {
+            const response = await axios.post(`${BACKEND_URL}/logout.php`, {}, {
                 withCredentials: true
             });
     
@@ -19,6 +21,8 @@ const ProfileDropdown = ({ userName }: { userName: string }) => {
                 throw new Error(response.data.error);
             }
             localStorage.removeItem('role');
+            localStorage.removeItem('auth_token');
+            Cookies.remove("auth_token");
             navigate('/'); 
         } catch (error) {
             console.error('Error during logout', error);

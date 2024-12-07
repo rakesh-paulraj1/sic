@@ -2,13 +2,14 @@ import { useEffect, useState } from 'react';
 import { BACKEND_URL } from '../../../config';
 import { Link} from 'react-router-dom';
 import Topbar from '../../components/Topbar';
-
+import Cookies from "js-cookie";
 import Navbar from '../../components/Navbar';
 import axios from 'axios';
 
 const AdminDashboard = () => {
 
-  
+
+
   const [showVerifyDialog, setShowVerifyDialog] = useState(false);
   const [selectedEvaluator, setSelectedEvaluator] = useState(null);
   const [evaluators, setEvaluators] = useState([]);
@@ -16,7 +17,7 @@ const AdminDashboard = () => {
   });
   const fetchEvaluators = async () => {
     try {
-      const response = await axios.get(`${BACKEND_URL}getevaluator.php`, {
+      const response = await axios.get(`${BACKEND_URL}/getevaluator.php`, {
         withCredentials: true,
       });
         
@@ -45,7 +46,7 @@ const AdminDashboard = () => {
   const handleVerifyConfirm = () => {
     if (!selectedEvaluator) return;
     fetchEvaluators();
-  axios.get(`${BACKEND_URL}approve_evaluator.php`, {
+  axios.get(`${BACKEND_URL}/approve_evaluator.php`, {
     params: { evaluator_id: selectedEvaluator },
     withCredentials: true
   }).then((response) => {

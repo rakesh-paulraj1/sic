@@ -23,7 +23,7 @@ const DetailedIdea = () => {
   useEffect(() => {
     const fetchIdea = async () => {
       try {
-        const response = await axios.get(`${BACKEND_URL}getidea.php?idea_id=${idea_id}`, { withCredentials: true });
+        const response = await axios.get(`${BACKEND_URL}/getidea.php?idea_id=${idea_id}`, { withCredentials: true });
         setIdea(response.data.idea);
   
         setAssignedEvaluators(response.data.idea.assigned_count); // Initialize assigned count based on idea data
@@ -37,7 +37,7 @@ const DetailedIdea = () => {
     // Fetch evaluators list
     const fetchEvaluators = async () => {
       try {
-        const response = await axios.get(`${BACKEND_URL}getevaluators.php`, { withCredentials: true });
+        const response = await axios.get(`${BACKEND_URL}/getevaluators.php`, { withCredentials: true });
         setEvaluators(response.data.evaluators);
    
      
@@ -48,7 +48,7 @@ const DetailedIdea = () => {
     };
     const fetchdetails=async()=>{
       try{
-        const response = await axios.get(`${BACKEND_URL}getmappeddata.php?idea_id=${idea_id}`, { withCredentials: true });
+        const response = await axios.get(`${BACKEND_URL}/getmappeddata.php?idea_id=${idea_id}`, { withCredentials: true });
         setdetails(response.data.data);
 
       }catch{
