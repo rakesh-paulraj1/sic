@@ -60,6 +60,7 @@ export function Login() {
           });
         }
         const user = response.data.role;
+        localStorage.setItem("role", user);
         if (user === "admin") {
           navigate("/admindashboard");
         }

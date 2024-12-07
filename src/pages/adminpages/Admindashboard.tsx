@@ -32,8 +32,12 @@ const AdminDashboard = () => {
       console.error('Error fetching evaluators:', error);
     }
   };
+  const checkuserrole=()=>{
+if(localStorage.getItem('role')!='admin'){
+  window.location.href = '/';
+  }}
   useEffect(() => {
-
+ checkuserrole( )
     fetchEvaluators();
   }, []);
   const handleVerifyClick = (evaluator: any) => {
