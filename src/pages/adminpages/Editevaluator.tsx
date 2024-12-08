@@ -115,7 +115,7 @@ const EditEvaluator = () => {
         <div className="bg-sky-900 text-white text-3xl font-bold py-4 px-6 text-center">
           Edit Evaluator
         </div>
-        <Link to="/admindashboard"> 
+        <Link to="/evaluatordashboard"> 
           <button className="bg-cyan-900 mt-4 text-white py-2 px-4 rounded-md hover:bg-cyan-800">Back</button>
         </Link>
         <form className="p-6 md:p-9 space-y-6" onSubmit={handleSubmit}>

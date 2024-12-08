@@ -15,28 +15,28 @@ const IdeaDetails: React.FC<IdeaDetailsProps> = ({ idea }) => {
     <div className="mt-6 px-6">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <div className="space-y-2">
-          <p className="text-2xl font-medium text-gray-600"><strong>Title:</strong></p>
-          <p className="text-xl text-gray-800">{idea?.idea_title}</p>
+          <p className="text-2xl font-medium text-black-600"><strong>Title:</strong></p>
+          <p className="text-xl text-black-800">{idea?.idea_title}</p>
         </div>
 
         <div className="space-y-2">
-          <p className="text-2xl font-medium text-gray-600"><strong>Description:</strong></p>
-          <p className=" text-xl text-gray-800">{idea?.idea_description}</p>
+          <p className="text-2xl font-medium text-black-600"><strong>Description:</strong></p>
+          <p className=" text-xl text-black-800">{idea?.idea_description}</p>
         </div>
 
         <div className="space-y-2">
-          <p className="text-2xl font-medium text-gray-600"><strong>Student Name:</strong></p>
-          <p className="text-xl text-gray-800">{idea?.student_name}</p>
+          <p className="text-2xl font-medium text-black-600"><strong>Student Name:</strong></p>
+          <p className="text-xl text-black-800">{idea?.student_name}</p>
         </div>
 
         <div className="space-y-2">
-          <p className="text-2xl font-medium text-gray-600"><strong>School:</strong></p>
-          <p className="text-xl text-gray-800">{idea?.school}</p>
+          <p className="text-2xl font-medium text-black-600"><strong>School:</strong></p>
+          <p className="text-xl text-black-800">{idea?.school}</p>
         </div>
 
         <div className="space-y-2">
-          <p className="text-2xl font-medium text-gray-600"><strong>Type:</strong></p>
-          <p className=" text-xl text-md text-gray-800">{idea?.type}</p>
+          <p className="text-2xl font-medium text-black-600"><strong>Type:</strong></p>
+          <p className=" text-xl text-md text-black-800">{idea?.type}</p>
         </div>
       </div>
     </div>

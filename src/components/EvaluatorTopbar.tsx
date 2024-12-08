@@ -34,7 +34,7 @@ const EvaluatorTopbar = () => {
         }
     };
   return (
-    <div className="fixed top-15 left-0 w-full bg-pink-800 text-white py-4 px-6 z-10">
+    <div className=" top-15 left-0 w-full bg-pink-800 text-white py-4 px-6 z-10">
     <div className="flex items-center justify-between w-full">
     <div className="flex items-center space-x-6">
     <Link to={"/evaluatordashboard"}><div className="text-lg font-bold">Evaluator Dashboard</div></Link>
