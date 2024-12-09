@@ -9,6 +9,7 @@ import IdeaDetails from "../../components/Ideadetails";
 import { ScoreRow } from "../../components/Boxes";
 import { Link } from "react-router-dom";
 import Button from "../../components/ui/Button";
+import { toast, ToastContainer } from "react-toastify";
 interface Idea {
   id: number;
   student_name: string;
@@ -31,11 +32,16 @@ export function Evaluate() {
   const [comment, setComment] = useState('');
   const [idea, setIdea] = useState<Idea>();
   const { idea_id } = useParams();
-
+// const [error,Seterror]=useState();
   const navigate = useNavigate(); 
+// const value = comment;
+// if(!value && value!==0){
+//   toast.error(errorMessages);
+// }
   const handleCommentChange = (e) => {
     setComment(e.target.value);
 };
+
 
   useEffect(() => {
     const role=localStorage.getItem("role");
@@ -59,7 +65,25 @@ export function Evaluate() {
   const handlesubmit=()=>{
     const score = noveltyScore + usefullness + feasability + scalability + sustaiblity;
    const status="evaluated"
-    
+   const scores = {
+    noveltyScore: "Novelty Score",
+    usefullness: "Usefulness Score",
+    feasability: "Feasibility Score",
+    scalability: "Scalability Score",
+    sustaiblity: "Sustainability Score",
+  };
+
+
+  for (const [key, value] of Object.entries(scores)) {
+    if (eval(key) === 0) { 
+      toast.error(`${value} must be greater than 0!`);
+      return;
+    }
+  }
+  if (!comment || comment.trim() === "") {
+    toast.error("Comments cannot be empty!");
+    return;
+  }
     axios.post(`${BACKEND_URL}evaluate.php`,{ evaluator_id: localStorage.getItem("user_id"),
       idea_id: idea_id,
       novelty_score: noveltyScore,
@@ -75,10 +99,15 @@ export function Evaluate() {
     })
       .then((response) => {
         console.log(response);
-        navigate("/evaluatordashboard");
-      })
+        if (response.data.success === "success") {
+          toast.success("Successfully Evaluated", {
+            onClose: () => navigate("/evaluatordashboard"), 
+          });
+       
+  }})
       .catch((error) => {
         console.log(error);
+        toast.success("Error in Evaluating the Idea");
       });
   }
 
@@ -107,7 +136,7 @@ export function Evaluate() {
         category="Feasability Score"
         score={feasability}
         onScoreChange={Setfeasability} 
-      />
+        />
       <ScoreRow
         category="Scalability Score"
         score={scalability}
@@ -156,6 +185,18 @@ export function Evaluate() {
         handlesubmit();
        }} content="Submit"  />
         </div>
+        <ToastContainer
+position="top-right"
+autoClose={5000}
+hideProgressBar={false}
+newestOnTop={false}
+closeOnClick
+rtl={false}
+pauseOnFocusLoss
+draggable
+pauseOnHover
+theme="colored"
+/>
   </div>
   
   );

@@ -11,11 +11,11 @@ export function ScoreRow({ category, score, maxScore = 10, onScoreChange }: Scor
   const [selectedScore, setSelectedScore] = useState(score);
 
   const handleClick = (index: number) => {
-    setSelectedScore(index); // Update the local selected score
-    onScoreChange(index); // Propagate the score change to the parent
+    setSelectedScore(index); 
+    onScoreChange(index); 
   };
 
-  const boxes = Array.from({ length: maxScore + 1 }, (_, i) => {
+  const boxes = Array.from({ length: maxScore }, (_, i) => i + 1).map((i) => {
     let color = "bg-red-500";
     if (i >= 9) color = "bg-green-500";
     else if (i >= 7) color = "bg-yellow-500";

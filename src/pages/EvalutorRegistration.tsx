@@ -1,9 +1,10 @@
 import Navbar from '../components/Navbar';
-import { Input, Select } from '../components/ui/Input';
+import {  Input, Select } from '../components/ui/Input';
 import { Label } from '../components/ui/Label';
 import { LabelInputContainer } from './adminpages/Login';
 import { useState } from 'react';
 import { BACKEND_URL } from "../../config";
+
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import {  useNavigate } from "react-router-dom"; // Import useNavigate
+import {  useNavigate, useParams } from "react-router-dom"; // Import useNavigate
 import Navbar from '../../components/Navbar';
 import EvaluatorTopbar from "../../components/EvaluatorTopbar";
 import { BACKEND_URL } from '../../../config';
@@ -19,6 +19,8 @@ interface Idea {
 }
 
 export function Viewevaluated() {
+  const { idea_id } = useParams();
+  
   const [ideas, setIdeas] = useState<Idea[]>([]);
 
   
@@ -33,7 +35,7 @@ if(role!="evaluator"){
 }
    
     axios
-      .get(`${BACKEND_URL}get_assigned_ideas.php?evaluator_id=${evaluatorId}`, {
+      .get(`${BACKEND_URL}get_evaluatedidea.php?idea_id=${idea_id}`, {
         withCredentials: true,
       })
       .then((response) => {
