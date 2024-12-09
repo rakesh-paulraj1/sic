@@ -58,7 +58,7 @@ export function Evaluate() {
   }, [navigate]);
   const handlesubmit=()=>{
     const score = noveltyScore + usefullness + feasability + scalability + sustaiblity;
-   
+   const status="evaluated"
     
     axios.post(`${BACKEND_URL}evaluate.php`,{ evaluator_id: localStorage.getItem("user_id"),
       idea_id: idea_id,
@@ -68,7 +68,9 @@ export function Evaluate() {
       scalability_score: scalability,
       sustainability_score: sustaiblity,
       comment: comment,
-      score: score,}, {
+      score: score,
+       status:status}
+    , {
       withCredentials: true,
     })
       .then((response) => {

@@ -4,7 +4,7 @@ import {  useNavigate } from "react-router-dom"; // Import useNavigate
 import Navbar from '../../components/Navbar';
 import EvaluatorTopbar from "../../components/EvaluatorTopbar";
 import { BACKEND_URL } from '../../../config';
-
+import { Link } from "react-router-dom";
 interface Idea {
   id: number;
   student_name: string;
@@ -18,10 +18,9 @@ interface Idea {
   status:string
 }
 
-export function EvaluatorDashboard() {
+export function Viewevaluated() {
   const [ideas, setIdeas] = useState<Idea[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+
   
 
   const navigate = useNavigate(); 
@@ -67,7 +66,9 @@ const handleViewEvaluatedClick=(ideaId:number)=>{
      <Navbar />
      <EvaluatorTopbar/>
      
-
+     <Link to="/admindashboard"> 
+          <button className="bg-cyan-900 mt-4 ml-3 text-white py-2 px-4 rounded-md hover:bg-cyan-800">Back</button>
+        </Link>
       <div className="bg-white p-6 rounded-lg shadow-lg">
         <h1 className="text-3xl font-semibold mb-6">Evaluator Dashboard</h1>
   <div className="mr-20 ml-20 mt-10 mb-6 bg-white rounded-lg overflow-hidden">
