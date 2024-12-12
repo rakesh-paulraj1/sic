@@ -106,12 +106,12 @@ export function Login() {
           </LabelInputContainer>
 
           <button
-            className="relative w-full inline-flex h-12 overflow-hidden rounded-full p-[1px] focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50"
+            className="px-8 py-2  bg-black  w-full text-white text-lg rounded-md font-semibold hover:bg-black/[0.8] hover:shadow-lg"
             type="submit"
           >
             Login &rarr;
           </button>
-          <Link className="mt-4 inline-block text-blue-600" to={"/evaluator_registration"}>
+          <Link className=" px-10 py-2  bg-black  w-full text-white text-lg  rounded-md font-semibold hover:bg-black/[0.8] hover:shadow-lg" to={"/evaluator_registration"}>
             New Evaluator &rarr;
           </Link>
         </form>

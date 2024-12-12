@@ -33,7 +33,7 @@ function App() {
           <Route path='/addideas' element={<Ideainput />} />
           <Route path='/detailedidea/:idea_id' element={<DetailedIdea />} />
           <Route path='/evaluate/:idea_id' element={<Evaluate />} />
-          <Route path='/viewevaluated/:ides_id' element={<Viewevaluated/>}/>
+          <Route path='/viewevaluated/:idea_id' element={<Viewevaluated/>}/>
         </Routes>
       </BrowserRouter>
     </div>

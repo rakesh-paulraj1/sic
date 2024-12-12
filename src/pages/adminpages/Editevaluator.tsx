@@ -39,9 +39,14 @@ const EditEvaluator = () => {
   useEffect(() => {
     const fetchEvaluatorData = async () => {
       try {
-        const response = await axios.get(`${BACKEND_URL}getevaluator1.php?evaluator_id=${evaluator_id}`,{
-          withCredentials: true
-        });
+        const response = await axios.post('http://localhost/dashboard/webdev/getevaluator1.php', {
+          evaluator_id: evaluator_id
+      }, {
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          withCredentials: true, // Include cookies
+      });
         console.log(response.data);
         setFormData(response.data.evaluator);
       } catch (error) {

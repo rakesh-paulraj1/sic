@@ -107,7 +107,7 @@ export function Evaluate() {
   }})
       .catch((error) => {
         console.log(error);
-        toast.success("Error in Evaluating the Idea");
+        toast.error("Error in Evaluating the Idea");
       });
   }
 
