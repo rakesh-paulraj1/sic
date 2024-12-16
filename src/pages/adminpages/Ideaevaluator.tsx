@@ -331,7 +331,7 @@ const handleSubmit = () => {
   useEffect(() => {
     const fetchIdeas = async () => {
       try {
-        const response = await axios.get(`${BACKEND_URL}getideas.php`, { withCredentials: true });
+        const response = await axios.get(`${BACKEND_URL}/getideas.php`, { withCredentials: true });
         setIdeas(response.data.ideas);
       } catch (error) {
         console.error('Error fetching ideas:', error);
