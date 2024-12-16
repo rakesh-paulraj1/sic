@@ -49,7 +49,7 @@ export function Evaluate() {
       navigate("/");
     }
    
-    axios.get(`${BACKEND_URL}getidea.php?idea_id=${idea_id}`, {
+    axios.get(`${BACKEND_URL}/getidea.php?idea_id=${idea_id}`, {
         withCredentials: true,
       })
       .then((response) => {
@@ -84,7 +84,7 @@ export function Evaluate() {
     toast.error("Comments cannot be empty!");
     return;
   }
-    axios.post(`${BACKEND_URL}evaluate.php`,{ evaluator_id: localStorage.getItem("user_id"),
+    axios.post(`${BACKEND_URL}/evaluate.php`,{ evaluator_id: localStorage.getItem("user_id"),
       idea_id: idea_id,
       novelty_score: noveltyScore,
       usefulness_score: usefullness,

@@ -29,7 +29,7 @@ export function Login() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${BACKEND_URL}signin.php`, formData, {
+      const response = await axios.post(`${BACKEND_URL}/signin.php`, formData, {
         withCredentials: true,
       });
   
@@ -105,15 +105,21 @@ export function Login() {
             />
           </LabelInputContainer>
 
-          <button
-            className="px-8 py-2  bg-black  w-full text-white text-lg rounded-md font-semibold hover:bg-black/[0.8] hover:shadow-lg"
-            type="submit"
-          >
-            Login &rarr;
-          </button>
-          <Link className=" px-10 py-2  bg-black  w-full text-white text-lg  rounded-md font-semibold hover:bg-black/[0.8] hover:shadow-lg" to={"/evaluator_registration"}>
-            New Evaluator &rarr;
-          </Link>
+          <div className="flex flex-col items-center space-y-4">
+  <button
+    className="px-6 py-2 bg-black text-white rounded-lg font-bold transform hover:-translate-y-1 transition duration-400"
+    type="submit"
+  >
+    Login &rarr;
+  </button>
+  <Link
+    className="px-6 py-2 bg-black text-white rounded-lg font-bold transform hover:-translate-y-1 transition duration-400"
+    to={"/evaluator_registration"}
+  >
+    New Evaluator &rarr;
+  </Link>
+</div>
+
         </form>
       </div>
       <ToastContainer />

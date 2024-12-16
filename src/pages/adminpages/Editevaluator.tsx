@@ -94,7 +94,7 @@ const EditEvaluator = () => {
       console.log(formData);
       try {
         toast.promise(
-        await axios.put(`${BACKEND_URL}edit_evaluator.php`, formData, {
+        await axios.put(`${BACKEND_URL}/edit_evaluator.php`, formData, {
           withCredentials: true,
         }),{
           pending: "Updating Evaluator Details...",

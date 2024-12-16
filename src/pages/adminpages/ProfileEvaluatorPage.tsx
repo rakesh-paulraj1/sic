@@ -7,6 +7,7 @@ import { Label } from "../../components/ui/Label";
 import { LabelInputContainer } from "../adminpages/Login";
 import { Link, useParams } from "react-router-dom";
 import { Select } from "../../components/ui/Input";
+import { BACKEND_URL } from "../../../config";
 
 export function ProfileEvaluatorPage() {
   const [formData, setFormData] = useState({
@@ -56,7 +57,7 @@ export function ProfileEvaluatorPage() {
 
     axios
       .post(
-        `http://localhost/webdev/getevaluator1.php`,
+        `${BACKEND_URL}/getevaluator1.php`,
         { evaluator_ids: [evaluatorId] },
         {
           withCredentials: true,
@@ -106,7 +107,7 @@ export function ProfileEvaluatorPage() {
 
     axios
       .post(
-        `http://localhost/webdev/updateevaluator.php`,  // Your backend URL
+        `${BACKEND_URL}/updateevaluator.php`,  // Your backend URL
         { ...formData, evaluator_id: evaluatorId },  // Include evaluator_id with form data
         {
           withCredentials: true,

@@ -11,7 +11,7 @@ const ProfileDropdown = ({ userName }: { userName: string }) => {
 
     const handleLogout = async () => {
         try {
-            const response = await axios.post(`${BACKEND_URL}logout.php`, {}, {
+            const response = await axios.post(`${BACKEND_URL}/logout.php`, {}, {
                 withCredentials: true
             });
     

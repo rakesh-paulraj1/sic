@@ -48,7 +48,7 @@ export function Ideaassigned() {
 
     // If both exist, fetch assigned ideas
     axios
-      .get(`http://localhost/webdev/get_assigned_ideas.php?evaluator_id=${evaluatorId}`, {
+      .get(`${BACKEND_URL}/get_assigned_ideas.php?evaluator_id=${evaluatorId}`, {
         withCredentials: true,
         headers: { Authorization: `Bearer ${authToken}` },
       })

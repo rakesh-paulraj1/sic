@@ -12,10 +12,12 @@ import { Label } from '../../components/ui/Label';
 const Ideaevaluator = () => {
   const [ideas, setIdeas] = useState([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedEvaluators, setSelectedEvaluators] = useState([]);
+  const [selectedEvaluators, setSelectedEvaluators] = useState<string[]>([]);
   const [currentIdeaId, setCurrentIdeaId] = useState(null);
   const [evaluators, setEvaluators] = useState([]);
+  const [themes, setThemes] = useState([]);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [csvData, setCsvData] = useState([]);
   const [formData, setFormData] = useState({
     idea_title: '',
     school: '',
@@ -35,71 +37,92 @@ const Ideaevaluator = () => {
         header: true,
         skipEmptyLines: true,
         complete: function (results) {
-          // Assuming the CSV has headers that match the form field names
-          const csvData = results.data[0]; // Taking the first row for simplicity
+          if (results.data.length > 0) {
+            // Parse the CSV data as an array of objects
+            const parsedData = results.data as Array<Record<string, string | number>>;
   
-          // Log the parsed CSV data for debugging
-          console.log("CSV Data:", csvData);
+            // Map the parsed data and handle evaluator IDs and other fields
+            const enrichedData = parsedData.map((row) => ({
+              idea_title: row.idea_title || '', // Use provided or default values
+              school: row.school || '',
+              student_name: row.student_name || '',
+              type: row.type || '',
+              idea_description: row.idea_description || '',
+              status_id: row.status_id || '3', // Default value
+              theme_id: row.theme_id || '',
+              evaluator_id_1: row.evaluator_id_1 || '', // Keep separate
+            evaluator_id_2: row.evaluator_id_2 || '', // Keep separate
+            evaluator_id_3: row.evaluator_id_3 || '',
+            }));
   
-          // Extract the evaluator_ids string (it should be like "[17,18,19]")
-          
+            // Log enriched data for debugging
+            console.log( enrichedData);
   
-          // Log the raw evaluator_ids value to check its format
-          
+            // Update the CSV data state
+            setCsvData(enrichedData);
   
-          // Parse evaluator_ids string to array of integers
-         
-         
-          // Log the parsed evaluator_ids
-         
-  
-          // Update the form data state
-          setFormData({
-            ...formData,
-            student_name: csvData['student_name'] || '',
-            school: csvData['school'] || '',
-            idea_title: csvData['idea_title'] || '',
-            status_id: csvData['status_id'] || '3',  // Default status if missing
-            theme_id: csvData['theme_id'] || '',
-            type: csvData['type'] || '',
-            idea_description: csvData['idea_description'] || '',
-            evaluator_id_1: csvData['evaluator_id_1'] || '', 
-            evaluator_id_2: csvData['evaluator_id_2'] || '', 
-            evaluator_id_3: csvData['evaluator_id_3'] || '', // Set evaluator_ids as an array
-          });
+            toast.success('CSV file staged successfully');
+          } else {
+            toast.error('The uploaded file is empty.');
+          }
         },
         error: function (error) {
           console.error('Error parsing CSV file:', error);
+          toast.error('Failed to parse CSV file.');
         },
       });
     }
   };
   
   
-  const handleSubmit = async (e: React.FormEvent) => {
-   
+  
+ 
 
-    if (!validateForm()) {
-      toast.error(errors);
-    console.log(errors);
+  const validateFile = (csvData: Array<Record<string, any>>): boolean => {
+    const requiredFields = [
+      'student_name',
+      'school',
+      'idea_title',
+      'theme_id',
+      'type',
+      'idea_description',
+      'evaluator_id_1',
+      'evaluator_id_2',
+      'evaluator_id_3',
+    ];
+  
+    // Check if the CSV data exists and is not empty
+    if (!csvData || csvData.length === 0) {
+      setErrors({ file: 'CSV file is empty or not properly uploaded.' });
+      return false;
     }
-    try {
-      const response = await axios.post(`${BACKEND_URL}register_idea.php`, formData, {
-        withCredentials: true,
+  
+    // Initialize an array to collect errors for each row
+    const rowErrors: string[] = [];
+  
+    // Validate each row
+    csvData.forEach((row, index) => {
+      requiredFields.forEach((field) => {
+        if (!row[field] || row[field].toString().trim() === '') {
+          rowErrors.push(`Row ${index + 1}: Missing required field "${field}"`);
+        }
       });
-
-      if (response.data.success) {
-      toast.success(response.data.success);}
-      else {
-       
-        toast.error(response.data.error);
-      }
-      window.location.reload();
-    } catch (error) {
-      console.error('Failed to submit:', error);
-      toast.error('Failed to register idea.');
+    });
+  
+    // If errors exist, set them in the state and return false
+    if (rowErrors.length > 0) {
+      setErrors({ file: rowErrors.join('\n') });
+      return false;
     }
+  
+    // If no errors, clear errors and return true
+    setErrors({});
+    return true;
   };
+  
+  
+  
+  
   const validateForm = () => {
     const requiredFields = [
       'student_name',
@@ -127,7 +150,7 @@ const Ideaevaluator = () => {
         // Validate 'student_name', 'school', and 'type' - should not exceed a single word (no spaces)
         if (['student_name', 'school', 'type'].includes(field)) {
           const wordCount = String(value).trim().split(/\s+/).length;
-          if (wordCount > 5) {
+          if (wordCount > 16) {
             errors[field] = `${field.replace(/_/g, ' ')} should not exceed Five word`;
           }
         }
@@ -161,10 +184,48 @@ const Ideaevaluator = () => {
     return true;
   };
  
+  // Function to fetch themes data from the backend
+const getThemes = async () => {
+  try {
+    const response = await axios.get(`${BACKEND_URL}/getallthemes.php`, { withCredentials: true });
+   setThemes(response.data.themes);
+    console.log(response)
+  } catch (error) {
+    console.error('Error fetching themes:', error);
+  }
+};
+
+// Function to download themes data (id and theme_name)
+const downloadThemeCSV = () => {
+  if (themes.length === 0) return; // If no evaluators, don't attempt to download
+
+  const csvData = convertThemesToCSV(themes);
+
+  // Create a Blob with the CSV data
+  const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  const url = URL.createObjectURL(blob);
+  link.setAttribute('href', url);
+  link.setAttribute('download', 'evaluators_themes.csv');
+  document.body.appendChild(link); // Append link to body (not visible)
+  link.click(); // Trigger download
+  document.body.removeChild(link); // Clean up by removing the link
+};
+
+// Function to convert evaluators theme data to CSV for download (id and theme_name)
+const convertThemesToCSV = (data) => {
+  const headers = 'id,theme_name'; // Define headers for theme data
+  const rows = data.map((item) => `${item.id},${item.theme_name || 'N/A'}`); // Extract 'id' and 'theme_name' (default to 'N/A' if not present)
+  
+  return [headers, ...rows].join('\n'); // Join headers and rows with new lines
+};
+
   const fetchEvaluators = async () => {
     try {
-      const response = await axios.get(`${BACKEND_URL}getevaluators.php`, { withCredentials: true });
+      const response = await axios.get(`${BACKEND_URL}/getevaluators.php`, { withCredentials: true });
       setEvaluators(response.data.evaluators);
+    
+      
     } catch (error) {
       console.error('Error fetching evaluators:', error);
     }
@@ -186,9 +247,16 @@ const Ideaevaluator = () => {
   };
 
 
+  // const convertToCSV = (data) => {
+  //   const headers = Object.keys(data[0]).join(','); // Get column headers from the keys of the first object
+  //   const rows = data.map((item) => Object.values(item).join(',')); // Get each row's values
+  //   return [headers, ...rows].join('\n'); // Join headers and rows with new lines
+  // };
   const convertToCSV = (data) => {
-    const headers = Object.keys(data[0]).join(','); // Get column headers from the keys of the first object
-    const rows = data.map((item) => Object.values(item).join(',')); // Get each row's values
+    // Extract only the 'first_name' and 'id' fields for each evaluator
+    const headers = 'id,first_name'; // Define the headers
+    const rows = data.map((item) => `${item.id},${item.first_name}`); // Map to rows with only 'id' and 'first_name'
+    
     return [headers, ...rows].join('\n'); // Join headers and rows with new lines
   };
 
@@ -203,21 +271,25 @@ const Ideaevaluator = () => {
     setSelectedEvaluators([]);
   };
 
-  // Handle the submit action when evaluators are selected
+  //Handle the submit action when evaluators are selected
   const handlefileSubmit = async  () => {
-   
-    if (!validateForm()) {
-      toast.error(errors);
-   
+    const combinedData = [...csvData];
+    if (!validateFile(combinedData)) {
+      toast.error(errors.file);
+      console.log(errors);
+   return;
     }
-    console.log(formData);
+    console.log(combinedData);
     try {
-      const response = await axios.post(`${BACKEND_URL}csv_idea_mapper.php`, formData, {
+      const response = await axios.post(`${BACKEND_URL}/csv_ideas_mapper.php`,combinedData , {
         withCredentials: true,
       });
-console.log(response);
+
       if (response.data.success) {
-      toast.success(response.data.success);}
+      toast.success(response.data.success);
+      window.location.reload();
+    }
+      
       else {
        
         toast.error(response.data.error);
@@ -227,6 +299,33 @@ console.log(response);
       toast.error('Failed to register idea.');
     }
   };
+const handleSubmit = () => {
+  if (selectedEvaluators.length !== 3) {
+   
+    toast.error("You must select exactly 3 evaluators.")
+    return;
+  }
+
+  axios
+    .post(`${BACKEND_URL}/map_evaluator_idea.php`, {
+      idea_id: currentIdeaId,
+      evaluator_ids: selectedEvaluators,
+    }).then((response) => {
+      console.log(response.data);
+      if(response.data.success){
+        toast.success('Evaluators assigned successfully');
+      }
+      
+      setIsDialogOpen(false);
+      window.location.reload();
+      setSelectedEvaluators([]);
+    })
+    .catch((error) => {
+      console.error('Error assigning evaluators:', error);
+      toast.error('Error assigning evaluators');
+    });
+};
+
 
   
   useEffect(() => {
@@ -241,6 +340,7 @@ console.log(response);
 
     fetchIdeas();
     fetchEvaluators();
+    getThemes();
   }, []);
 
   return (
@@ -252,8 +352,11 @@ console.log(response);
         <h1 className="text-4xl font-bold">Admin Idea Evaluator</h1>
       </div>
       <div className="flex space-x-4 items-center mb-6">
-      <button onClick={downloadCSV} className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600">
+      <button onClick={downloadCSV} className="bg-gpx-8 py-2  bg-black  text-white text-lg rounded-md font-semibold hover:bg-black/[0.8] hover:shadow-lg">
         Download Evaluators as CSV
+      </button>
+      <button onClick={ downloadThemeCSV} className="bg-gpx-8 py-2  bg-black  text-white text-lg rounded-md font-semibold hover:bg-black/[0.8] hover:shadow-lg">
+        Download Themes as CSV
       </button>
    
       </div>
@@ -268,7 +371,7 @@ console.log(response);
                 className="p-4 text-lg  w-full h-16 border border-gray-300 rounded-md"
               />
             </LabelInputContainer>
-            <button onClick={handlefileSubmit} className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600">
+            <button onClick={handlefileSubmit} className="px-8 py-2  bg-black  text-white text-lg rounded-md font-semibold hover:bg-black/[0.8] hover:shadow-lg">
        Submit Ideas
       </button>
         <div className="mr-20 ml-20 mt-10 mb-6 bg-white rounded-lg overflow-hidden">
@@ -346,25 +449,32 @@ console.log(response);
 </table>
 
 
-          {isDialogOpen && (
+{isDialogOpen && (
             <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
               <div className="bg-white p-6 rounded shadow-lg w-96">
                 <h2 className="text-xl mb-4">Assign Evaluators</h2>
 
                 {/* Dropdown to select evaluators */}
-                  <select
-                    className="w-full border px-3 py-2 mb-4"
-                    multiple
-                    value={selectedEvaluators}
-                    onChange={(e) => setSelectedEvaluators([...e.target.selectedOptions].map(option => option.value))}
-                  >
-                    <option value="">Select Evaluators (Choose 3)</option>
-                    {evaluators.map((evaluator) => (
-                      <option key={evaluator.id} value={evaluator.id}>
-                        {evaluator.name}
-                      </option>
-                    ))}
-                  </select>
+                <select
+  className="w-full border px-3 py-2 mb-4"
+  multiple
+  value={selectedEvaluators}
+  onChange={(e) => {
+    const selectedOptions = Array.from(e.target.selectedOptions, (option) => option.value);
+    if (selectedOptions.length <= 3) {
+      setSelectedEvaluators(selectedOptions);
+      console.log(selectedEvaluators);
+    }
+  }}
+>
+  <option value="">Select Evaluators (Choose 3)</option>
+  {evaluators.map((evaluator) => (
+    <option key={evaluator.id} value={evaluator.id}>
+      {evaluator.first_name + " " + evaluator.last_name}
+    </option>
+  ))}
+</select>
+
 
                 {/* Dialog actions */}
                 <div className="flex justify-end space-x-4">

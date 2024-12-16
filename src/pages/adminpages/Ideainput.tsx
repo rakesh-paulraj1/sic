@@ -11,6 +11,7 @@ import Topbar from '../../components/Topbar';
 import { BACKEND_URL } from '../../../config';
 import { Select } from '../../components/ui/Input';
 
+
 const Ideainput = () => {
   const [formData, setFormData] = useState({
     idea_title: '',
@@ -21,7 +22,7 @@ const Ideainput = () => {
     status_id: '3', 
     theme_id: '',
   });
-
+  const [csvData, setCsvData] = useState([]);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const validateForm = () => {
@@ -31,7 +32,7 @@ const Ideainput = () => {
       'type',
       'idea_description',
       'idea_title',
-      'theme_id', // Added this as it's part of the form
+      'theme_id', 
     ];
 
     const newErrors: Record<string, string> = requiredFields.reduce(
@@ -52,7 +53,6 @@ const Ideainput = () => {
           }
         }
 
-        // Validate 'idea_description' and 'idea_title' - should not exceed 100 characters
         if ([ 'idea_title'].includes(field)) {
           const maxLength = 50;
           if (String(value).length > maxLength) {
@@ -90,7 +90,8 @@ const Ideainput = () => {
     setErrors({ ...errors, [name]: '' });
   };
 
-  // Function to handle CSV file upload
+
+  
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -98,26 +99,43 @@ const Ideainput = () => {
         header: true,
         skipEmptyLines: true,
         complete: function (results) {
-          // Assuming the CSV has headers that match the form field names
-          const csvData = results.data[0]; // Taking the first row for simplicity
-          setFormData({
-            ...formData,
-            ...csvData,
-          });
+          if (results.data.length > 0) {
+            const parsedData = results.data as Array<Record<string, string | number>>;
+  
+       
+            const enrichedData = parsedData.map((row) => ({
+              idea_title: row.idea_title || '', // Use provided or default values
+              school: row.school || '',
+              student_name: row.student_name || '',
+              type: row.type || '',
+              idea_description: row.idea_description || '',
+              status_id: row.status_id || '3', // Default value
+              theme_id: row.theme_id || '',
+            }));
+  
+            setCsvData(enrichedData);
+          
+            toast.success('CSV file staged successfully');
+           
+          } else {
+            toast.error('The uploaded file is empty.');
+          }
         },
         error: function (error) {
           console.error('Error parsing CSV file:', error);
+          toast.error('Failed to parse CSV file.');
         },
       });
     }
   };
+  
 
   const handleSubmit = async (e: React.FormEvent) => {
    
     e.preventDefault();
     if (!validateForm()) {
       toast.error(errors);
-    console.log(errors);
+    return;
     }
     try {
       const response = await axios.post(`${BACKEND_URL}/register_idea.php`, formData, {
@@ -127,7 +145,6 @@ const Ideainput = () => {
       if (response.data.success) {
       toast.success(response.data.success);}
       else {
-       
         toast.error(response.data.error);
       }
     } catch (error) {
@@ -135,6 +152,65 @@ const Ideainput = () => {
       toast.error('Failed to register idea.');
     }
   };
+  const validateFile = () => {
+    const requiredFields = ['student_name', 'school', 'idea_title', 'theme_id', 'type', 'idea_description'];
+  
+    if (!csvData || csvData.length === 0) {
+      setErrors({ file: 'CSV file is empty or not properly uploaded.' });
+      return false;
+    }
+  
+   
+    const rowErrors: string[] = [];
+    csvData.forEach((row, index) => {
+      requiredFields.forEach((field) => {
+        if (!row[field]) {
+          rowErrors.push(`Row ${index + 1}: Missing required field "${field}"`);
+        }
+      });
+    });
+  
+    if (rowErrors.length > 0) {
+      setErrors({ file: rowErrors.join('\n') });
+      return false;
+    }
+  
+    setErrors({});
+    return true;
+  };
+  
+  const handlefileSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const combinedData = [...csvData];
+
+    if (!csvData || csvData.length === 0) {
+      toast.error('No file uploaded or the file is empty. Please upload a valid file.');
+      return;
+    }
+    if (!validateFile()) {
+      
+      toast.error(errors.file);
+    
+      return;
+    }
+    try {
+      const response = await axios.post(`${BACKEND_URL}/register_ideas.php`,combinedData, {
+        withCredentials: true,
+      });
+
+      if (response.data.success) {
+        toast.success(response.data.success);
+      } else {
+        console.log(response.data.error)
+        toast.error(response.data.error);
+      }
+    } catch (error) {
+      console.error('Failed to submit ideas:', error);
+      toast.error('Failed to register ideas.');
+    }
+  };
+ 
 
   return (
     <div>
@@ -150,18 +226,22 @@ const Ideainput = () => {
           </button>
         </Link>
 
-        <form className="p-6 md:p-9 space-y-6" onSubmit={handleSubmit}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <LabelInputContainer className="mb-4">
-              <Label htmlFor="csvFile">Upload CSV</Label>
+        <LabelInputContainer className="mb-4 mt-6">
+              <Label htmlFor="csvFile">Upload CSV to Import Ideas and Map with evaluators</Label>
               <Input
                 id="csvFile"
                 type="file"
                 accept=".csv"
                 onChange={handleFileUpload}
-                className="p-4 text-lg w-full h-16 border border-gray-300 rounded-md"
+                className="p-4 text-lg  w-full h-16 border border-gray-300 rounded-md"
               />
             </LabelInputContainer>
+            <button onClick={handlefileSubmit} className="px-8 py-2  bg-black  text-white text-lg rounded-md font-semibold hover:bg-black/[0.8] hover:shadow-lg">
+       Submit Ideas
+      </button>
+
+        <form className="p-6 md:p-9 space-y-6" onSubmit={handleSubmit}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
             <LabelInputContainer className="mb-4">
               <Label htmlFor="student_name">Student Name</Label>
@@ -283,9 +363,10 @@ const Ideainput = () => {
 
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-3 font-semibold rounded-md hover:bg-blue-700 transition duration-300">
+            className="px-8 py-2  bg-black  w-full text-white text-lg rounded-md font-semibold hover:bg-black/[0.8] hover:shadow-lg">
             Add Idea
           </button>
+        
         </form>
       </div>
       <ToastContainer/>

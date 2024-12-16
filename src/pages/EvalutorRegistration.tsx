@@ -143,7 +143,7 @@ const EvaluatorRegistration = () => {
     if (validateForm()) {
       try {
         const response = await toast.promise(
-          axios.post(`${BACKEND_URL}register_evaluator.php`, formData, {
+          axios.post(`${BACKEND_URL}/register_evaluator.php`, formData, {
             withCredentials: true,
           }),
           {
@@ -506,10 +506,10 @@ console.log(response.data);
             <LabelInputContainer className="mb-4">
               <Label htmlFor="expertise_in_startup_value_chain"> Area of Expertise in Startup Value Chain</Label>
               <Select
-    id="theme_preference_3"
-    name="theme_preference_3"
+    id="expertise_in_startup_value_chain"
+    name="expertise_in_startup_value_chain"
     className="p-4 text-lg w-full h-16 border border-gray-300 rounded-md"
-    value={formData.theme_preference_3}
+    value={formData.expertise_in_startup_value_chain}
     onChange={handleInputChange}
   >
     
@@ -541,10 +541,10 @@ Venture Planning and Enterprise/Startup">
             <LabelInputContainer className="mb-4">
               <Label htmlFor="role_interested">Role Interested</Label>
               <Select
-    id="theme_preference_3"
-    name="theme_preference_3"
+    id="role_interested"
+    name="role_interested"
     className="p-4 text-lg w-full h-16 border border-gray-300 rounded-md"
-    value={formData.theme_preference_3}
+    value={formData.role_interested}
     onChange={handleInputChange}
   >
     <option value="Mentor">Mentor</option>

@@ -38,6 +38,7 @@ const DetailedIdea = () => {
     const fetchEvaluators = async () => {
       try {
         const response = await axios.get(`${BACKEND_URL}/getevaluators.php`, { withCredentials: true });
+        console.log(response);
         setEvaluators(response.data.evaluators);
    
      
@@ -63,7 +64,7 @@ const DetailedIdea = () => {
     if (!selectedEvaluator) return;
     console.log(selectedEvaluator);
     console.log(idea_id);
-    axios.put(`${BACKEND_URL}map_evaluator_1.php`,{
+    axios.put(`${BACKEND_URL}/map_evaluator_1.php`,{
       idea_id: idea_id,
       evaluator_id: selectedEvaluator,
       withCredentials: true
@@ -78,7 +79,7 @@ const DetailedIdea = () => {
   const handleVerifyConfirm = () => {
     if (!selectedEvaluator) return; // Check if an evaluator is selected
     
-    axios.delete(`${BACKEND_URL}remove_evaluator_idea.php`, {
+    axios.delete(`${BACKEND_URL}/remove_evaluator_idea.php`, {
      
       data: {
         idea_id: idea_id,
@@ -155,7 +156,7 @@ const DetailedIdea = () => {
             <p className=" text-xl font-medium text-gray-600"><strong>Type:</strong></p>
             <p className=" text-md text-gray-800">{idea.type}</p>
           </div>
-          {idea.assigned_count < 3 ? (
+          {idea.assigned_count < 3 && idea.assigned_count >1 ? (
   <div className="space-y-2">
     <p className="text-xl font-medium text-gray-600">
       <strong>Add Evaluator:</strong>
@@ -174,7 +175,7 @@ const DetailedIdea = () => {
           ) // Filter out already assigned evaluators
           .map((evaluator) => (
             <option key={evaluator.id} value={evaluator.id}>
-              {evaluator.name}
+              {evaluator.first_name +" "+evaluator.last_name}
             </option>
           ))}
       </select>

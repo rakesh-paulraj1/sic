@@ -39,7 +39,7 @@ export function Viewevaluated() {
  
     axios
     .post(
-      `${BACKEND_URL}getideascore.php`,
+      `${BACKEND_URL}/getideascore.php`,
       {
         evaluator_id: evaluatorId,
         idea_id: idea_id,

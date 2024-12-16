@@ -34,7 +34,7 @@ if(role!="evaluator"){
 }
    
     axios
-      .get(`${BACKEND_URL}get_assigned_ideas.php?evaluator_id=${evaluatorId}`, {
+      .get(`${BACKEND_URL}/get_assigned_ideas.php?evaluator_id=${evaluatorId}`, {
         withCredentials: true,
       })
       .then((response) => {
