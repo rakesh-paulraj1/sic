@@ -10,6 +10,7 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import LanguageDropdown from '../components/Languagedropdown';
+import { span } from 'framer-motion/client';
 const EvaluatorRegistration = () => {
   const [Themes, setThemes] = useState([]);
   const [formData, setFormData] = useState({
@@ -83,8 +84,8 @@ const EvaluatorRegistration = () => {
   
   const validateForm = () => {
     const requiredFields = [
-      'email', 'password', 'first_name', 'last_name', 'gender', 'alternate_email', 
-      'phone_number', 'alternate_phone_number', 'college_name', 'designation', 
+      'email', 'password', 'first_name', 'last_name', 'gender', 
+      'phone_number', 'college_name', 'designation', 
       'total_experience', 'city', 'state', 'knowledge_domain', 
       'theme_preference_1', 'theme_preference_2', 'theme_preference_3', 
       'expertise_in_startup_value_chain', 'role_interested','languages_known'
@@ -112,7 +113,7 @@ const EvaluatorRegistration = () => {
         }
       }
 
-      if (field === 'phone_number' || field === 'alternate_phone_number') {
+      if (field === 'phone_number') {
         if (!/^\d{10}$/.test(String(value))) {  // Ensure it's exactly 10 digits
           errors[field] = `${field.replace(/_/g, ' ')} should be a 10-digit number`;
         }
@@ -214,7 +215,9 @@ const EvaluatorRegistration = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             
             <LabelInputContainer className="mb-4">
-              <Label htmlFor="first_name">First Name</Label>
+            <Label htmlFor="first_name">
+            First Name <span className="text-red-500">*</span>
+            </Label>
               <Input
                 id="first_name"
                 placeholder="First Name"
@@ -227,7 +230,9 @@ const EvaluatorRegistration = () => {
             </LabelInputContainer>
 
             <LabelInputContainer className="mb-4">
-              <Label htmlFor="last_name">Last Name</Label>
+            <Label htmlFor="last_name">
+            Last Name <span className="text-red-500">*</span>
+           </Label>
               <Input
                 id="last_name"
                 placeholder="Last Name"
@@ -240,7 +245,9 @@ const EvaluatorRegistration = () => {
             </LabelInputContainer>
 
             <LabelInputContainer className="mb-4">
-              <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">
+            Email <span className="text-red-500">*</span>
+            </Label>
               <Input
                 id="email"
                 placeholder="Email"
@@ -265,7 +272,9 @@ const EvaluatorRegistration = () => {
               />
             </LabelInputContainer>
             <LabelInputContainer className="mb-4">
-              <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">
+            Password <span className="text-red-500">*</span>
+            </Label>
               <Input
                 id="password"
                 placeholder="Password"
@@ -278,7 +287,9 @@ const EvaluatorRegistration = () => {
             </LabelInputContainer>
 
             <LabelInputContainer className="mb-4">
-              <Label htmlFor="phone_number">Phone Number</Label>
+            <Label htmlFor="phone_number">
+            Phone Number <span className="text-red-500">*</span>
+            </Label>
               <Input
                 id="phone_number"
                 placeholder="Phone Number"
@@ -305,23 +316,30 @@ const EvaluatorRegistration = () => {
               />
             </LabelInputContainer>
             <LabelInputContainer className="mb-4">
-              <Label htmlFor="college_name">Gender</Label>
+            <Label htmlFor="gender">
+            Gender <span className="text-red-500">*</span>
+            </Label>
+              
               <Select
-    id="gender"
-    name="gender"
-    className="p-4 text-lg w-full h-16 border border-gray-300 rounded-md"
-    value={formData.gender}
-    onChange={handleInputChange}
-  >
-    <option value="" disabled>Select a theme</option>
-     <option value="Male">Male</option>
-      <option value="Female">Female</option>
-      <option value="Other">Other</option>
-  </Select>
+                id="gender"
+                placeholder="Gender"
+                name="gender"
+                type="text"
+                className="p-4 text-lg w-full h-16 border border-gray-300 rounded-md"
+                value={formData.gender}
+                onChange={handleInputChange}
+              >
+                 <option value="" disabled>Select Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </Select>
             </LabelInputContainer>
 
             <LabelInputContainer className="mb-4">
-              <Label htmlFor="college_name">College Name</Label>
+            <Label htmlFor="college_name">
+            College Name <span className="text-red-500">*</span>
+            </Label>
               <Input
                 id="college_name"
                 placeholder="College Name"
@@ -334,7 +352,9 @@ const EvaluatorRegistration = () => {
             </LabelInputContainer>
 
             <LabelInputContainer className="mb-4">
-              <Label htmlFor="designation">Designation</Label>
+            <Label htmlFor="designation">
+    Designation <span className="text-red-500">*</span>
+  </Label>
               <Input
                 id="designation"
                 placeholder="Designation"
@@ -347,7 +367,9 @@ const EvaluatorRegistration = () => {
             </LabelInputContainer>
 
             <LabelInputContainer className="mb-4">
-              <Label htmlFor="total_experience">Total Experience</Label>
+            <Label htmlFor="total_experience">
+            Total Experience <span className="text-red-500">*</span>
+            </Label>
               <Input
                 id="total_experience"
                 placeholder="Total Experience (Years)"
@@ -360,7 +382,9 @@ const EvaluatorRegistration = () => {
             </LabelInputContainer>
 
             <LabelInputContainer className="mb-4">
-              <Label htmlFor="city">City</Label>
+            <Label htmlFor="city">
+            City <span className="text-red-500">*</span>
+            </Label>
               <Input
                 id="city"
                 placeholder="City"
@@ -373,7 +397,9 @@ const EvaluatorRegistration = () => {
             </LabelInputContainer>
 
             <LabelInputContainer className="mb-4">
-              <Label htmlFor="state">State</Label>
+            <Label htmlFor="state">
+            State <span className="text-red-500">*</span>
+            </Label>
               <Input
                 id="state"
                 placeholder="State"
@@ -421,6 +447,23 @@ const EvaluatorRegistration = () => {
 <LabelInputContainer className="mb-4">
   
   <Label htmlFor="theme_preference_1">Theme Preference 1</Label>
+            <Label htmlFor="knowledge_domain">
+            Knowledge Domain <span className="text-red-500">*</span>
+            </Label>
+              <Input
+                id="knowledge_domain"
+                placeholder="Knowledge Domain"
+                name="knowledge_domain"
+                type="text"
+                className="p-4 text-lg w-full h-16 border border-gray-300 rounded-md"
+                value={formData.knowledge_domain}
+                onChange={handleInputChange}
+              />
+            </LabelInputContainer>
+            <LabelInputContainer className="mb-4">
+            <Label htmlFor="theme_preference_1">
+            Theme Preference 1 <span className="text-red-500">*</span>
+            </Label>
   <Select
     id="theme_preference_1"
     name="theme_preference_1"
@@ -442,6 +485,9 @@ const EvaluatorRegistration = () => {
 <LabelInputContainer className="mb-4">
   
   <Label htmlFor="theme_preference_2">Theme Preference 2</Label>
+<Label htmlFor="theme_preference_2">
+Theme Preference 2 <span className="text-red-500">*</span>
+</Label>
   <Select
     id="theme_preference_2"
     name="theme_preference_2"
@@ -461,6 +507,9 @@ const EvaluatorRegistration = () => {
 <LabelInputContainer className="mb-4">
   
   <Label htmlFor="theme_preference_3">Theme Preference 3</Label>
+<Label htmlFor="theme_preference_3">
+Theme Preference 3 <span className="text-red-500">*</span>
+</Label>
   <Select
     id="theme_preference_3"
     name="theme_preference_3"
@@ -480,9 +529,11 @@ const EvaluatorRegistration = () => {
 
 
 
-
+    
             <LabelInputContainer className="mb-4">
-              <Label htmlFor="expertise_in_startup_value_chain"> Area of Expertise in Startup Value Chain</Label>
+            <Label htmlFor="expertise_in_startup_value_chain">
+            Area of Expertise in Startup Value Chain <span className="text-red-500">*</span>
+            </Label>
               <Select
     id="expertise_in_startup_value_chain"
     name="expertise_in_startup_value_chain"
@@ -517,7 +568,10 @@ Venture Planning and Enterprise/Startup">
             </LabelInputContainer>
 
             <LabelInputContainer className="mb-4">
-              <Label htmlFor="role_interested">Role Interested</Label>
+            <Label htmlFor="role_interested">
+Role Interested <span className="text-red-500">*</span>
+
+</Label>
               <Select
     id="role_interested"
     name="role_interested"
