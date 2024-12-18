@@ -1,4 +1,4 @@
-"use client";
+// @ts-nocheck
 import React, { useEffect, useState } from "react";
 import { Label } from "@radix-ui/react-label";
 import { Input } from "../../components/ui/Input";

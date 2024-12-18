@@ -5,7 +5,7 @@ import Navbar from "../../components/Navbar";
 import { Input } from "../../components/ui/Input";
 import { Label } from "../../components/ui/Label";
 import { LabelInputContainer } from "../adminpages/Login";
-import { Link, useParams } from "react-router-dom";
+import { Link} from "react-router-dom";
 import { Select } from "../../components/ui/Input";
 import { BACKEND_URL } from "../../../config";
 
@@ -33,8 +33,6 @@ export function ProfileEvaluatorPage() {
     delete_status: "",
     evaluator_status: "",
   });
-  const { evaluator_id } = useParams();
-  const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -91,7 +89,7 @@ export function ProfileEvaluatorPage() {
     event.preventDefault();
 
     const authToken = Cookies.get("auth_token1");  // Get auth_token1 from cookies
-    const evaluatorId = localStorage.getItem("evaluator_id"); // Get evaluator_id from localStorage
+    const evaluatorId = localStorage.getItem("evaluator_id");
 
     if (!authToken) {
       setError("You are not authenticated. Please log in again.");

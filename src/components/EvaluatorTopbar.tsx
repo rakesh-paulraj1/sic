@@ -1,5 +1,4 @@
 import { User2Icon } from 'lucide-react'
-import React from 'react'
 import axios from 'axios'
 import { BACKEND_URL } from '../../config'
 

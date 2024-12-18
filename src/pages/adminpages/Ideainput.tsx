@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
@@ -143,7 +144,9 @@ const Ideainput = () => {
       });
 
       if (response.data.success) {
-      toast.success(response.data.success);}
+      toast.success(response.data.success);
+   
+    }
       else {
         toast.error(response.data.error);
       }

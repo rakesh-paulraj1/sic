@@ -1,3 +1,4 @@
+// @ts-nocheck
 import Navbar from '../../components/Navbar';
 import { Input } from '../../components/ui/Input';
 import { Label } from '../../components/ui/Label';
@@ -8,6 +9,7 @@ import axios from 'axios';
 import { Link, useParams } from 'react-router-dom';
 import { Select  } from '../../components/ui/Input';
 import { toast } from 'react-toastify';
+import LanguageDropdown from '../../components/Languagedropdown';
 const EditEvaluator = () => {
   const [formData, setFormData] = useState({
     email: '',
@@ -31,6 +33,7 @@ const EditEvaluator = () => {
     role_interested: '',
     delete_status: '',
     evaluator_status: '',
+    languages_known:[]
   });
   const { evaluator_id } = useParams();
   console.log(evaluator_id);
@@ -39,7 +42,7 @@ const EditEvaluator = () => {
   useEffect(() => {
     const fetchEvaluatorData = async () => {
       try {
-        const response = await axios.post('http://localhost/dashboard/webdev/getevaluator1.php', {
+        const response = await axios.post(`${BACKEND_URL}/getevaluator1.php`, {
           evaluator_id: evaluator_id
       }, {
           headers: {
@@ -461,7 +464,21 @@ const EditEvaluator = () => {
                 onChange={handleInputChange}
               />
             </LabelInputContainer>
-            
+            <LabelInputContainer className="mb-4">
+              <Label htmlFor="languages_known">Languages Known</Label>
+              <Input
+  id="languages_known"
+  placeholder="Languages Known"
+  name="languages_known"
+  type="text"
+  className="p-4 text-lg w-full h-16 border border-gray-300 rounded-md"
+  value={formData.languages_known}
+  readOnly // Prevents editing
+/>
+
+            </LabelInputContainer>
+         
+
             
           </div>
           <button

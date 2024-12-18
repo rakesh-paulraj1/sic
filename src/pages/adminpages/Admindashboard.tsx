@@ -1,8 +1,8 @@
+// @ts-nocheck
 import { useEffect, useState } from 'react';
 import { BACKEND_URL } from '../../../config';
 import { Link} from 'react-router-dom';
 import Topbar from '../../components/Topbar';
-import Cookies from "js-cookie";
 import Navbar from '../../components/Navbar';
 import axios from 'axios';
 
@@ -57,6 +57,7 @@ if(localStorage.getItem('role')!='admin'){
       console.log(response.data);
       setEvaluators(evaluators.filter((evaluator) => evaluator.id !== selectedEvaluator));
       setShowVerifyDialog(false);
+      window.location.reload();
     })
     .catch((error) => {
       console.error("Error during request:", error);

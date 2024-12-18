@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BACKEND_URL } from '../../../config';
 import axios from 'axios';
@@ -15,7 +15,7 @@ const ProfileDropdown = ({ userName }: { userName: string }) => {
                 withCredentials: true
             });
     
-            console.log(response.data);  
+             
             
             if (response.data.error) {
                 throw new Error(response.data.error);

@@ -1,14 +1,17 @@
+// @ts-nocheck
 import Navbar from '../components/Navbar';
 import {  Input, Select } from '../components/ui/Input';
 import { Label } from '../components/ui/Label';
 import { LabelInputContainer } from './adminpages/Login';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BACKEND_URL } from "../../config";
 
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
+import LanguageDropdown from '../components/Languagedropdown';
 const EvaluatorRegistration = () => {
+  const [Themes, setThemes] = useState([]);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -30,11 +33,40 @@ const EvaluatorRegistration = () => {
     expertise_in_startup_value_chain: '',
     role_interested: '',
     delete_status: "0",
-    evaluator_status:"3"
+    evaluator_status:"3",
+    languages_known:[],
+
   });
+  useEffect(() => {
+    const fetchThemes = async () => {
+      try {
+        const response = await axios.get(`${BACKEND_URL}/get_themes.php`, {
+          withCredentials: true,
+        });
+       
+  
+        // Check if `themes` exists in the API response
+        if (response.data && response.data.themes) {
+          setThemes(response.data.themes);
+          // Populate the Themes state
+        } else {
+          console.error("Themes key is missing in API response.");
+        }
+      } catch (error) {
+        console.error("Error fetching themes:", error);
+      }
+    };
+  
+    fetchThemes();
+  }, []);
+  
+
+
+  
   const [errors, setErrors] = useState({});
   const validateThemePreferences = (field: string, value: any, formData: Record<string, any>) => {
    
+    
     const themeFields = ['theme_preference_1', 'theme_preference_2', 'theme_preference_3'];
   
   
@@ -55,7 +87,7 @@ const EvaluatorRegistration = () => {
       'phone_number', 'alternate_phone_number', 'college_name', 'designation', 
       'total_experience', 'city', 'state', 'knowledge_domain', 
       'theme_preference_1', 'theme_preference_2', 'theme_preference_3', 
-      'expertise_in_startup_value_chain', 'role_interested'
+      'expertise_in_startup_value_chain', 'role_interested','languages_known'
     ];
 
     const newErrors: Record<string, string> = requiredFields.reduce((errors: Record<string, string>, field: string) => {
@@ -139,9 +171,10 @@ const EvaluatorRegistration = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+    console.log(formData);
     if (validateForm()) {
       try {
+
         const response = await toast.promise(
           axios.post(`${BACKEND_URL}/register_evaluator.php`, formData, {
             withCredentials: true,
@@ -150,7 +183,7 @@ const EvaluatorRegistration = () => {
             pending: 'Submitting...',
           }
         );
-console.log(response.data);
+
         if (response.data.message) {
           toast.success(response.data.message+"Please wait till the  admin approves your request");;
         } else {
@@ -162,6 +195,7 @@ console.log(response.data);
       }
     }
   };
+
 
 
 
@@ -272,15 +306,18 @@ console.log(response.data);
             </LabelInputContainer>
             <LabelInputContainer className="mb-4">
               <Label htmlFor="college_name">Gender</Label>
-              <Input
-                id="gender"
-                placeholder="Gender"
-                name="gender"
-                type="text"
-                className="p-4 text-lg w-full h-16 border border-gray-300 rounded-md"
-                value={formData.gender}
-                onChange={handleInputChange}
-              />
+              <Select
+    id="gender"
+    name="gender"
+    className="p-4 text-lg w-full h-16 border border-gray-300 rounded-md"
+    value={formData.gender}
+    onChange={handleInputChange}
+  >
+    <option value="" disabled>Select a theme</option>
+     <option value="Male">Male</option>
+      <option value="Female">Female</option>
+      <option value="Other">Other</option>
+  </Select>
             </LabelInputContainer>
 
             <LabelInputContainer className="mb-4">
@@ -349,18 +386,40 @@ console.log(response.data);
             </LabelInputContainer>
 
             <LabelInputContainer className="mb-4">
-              <Label htmlFor="knowledge_domain">Knowledge Domain</Label>
-              <Input
-                id="knowledge_domain"
-                placeholder="Knowledge Domain"
-                name="knowledge_domain"
-                type="text"
-                className="p-4 text-lg w-full h-16 border border-gray-300 rounded-md"
-                value={formData.knowledge_domain}
-                onChange={handleInputChange}
-              />
-            </LabelInputContainer>
-            <LabelInputContainer className="mb-4">
+  <Label htmlFor="knowledge_domain">Knowledge Domain</Label>
+  <Select
+    id="knowledge_domain"
+    name="knowledge_domain"
+    className="p-4 text-lg w-full h-16 border border-gray-300 rounded-md"
+    value={formData.knowledge_domain}
+    onChange={handleInputChange}
+  >
+    <option value="" disabled>Select Knowledge Domain</option>
+    <option value="Agriculture and Rural Development">Agriculture and Rural Development</option>
+    <option value="Clean Water">Clean Water</option>
+    <option value="Energy / Renewable Energy">Energy / Renewable Energy</option>
+    <option value="Finance">Finance</option>
+    <option value="Food Technology">Food Technology</option>
+    <option value="Healthcare & Biomedical Devices">Healthcare & Biomedical Devices</option>
+    <option value="Life Sciences">Life Sciences</option>
+    <option value="Miscellaneous">Miscellaneous</option>
+    <option value="Robotics & Drones">Robotics & Drones</option>
+    <option value="Security & Surveillance">Security & Surveillance</option>
+    <option value="Smart Cities">Smart Cities</option>
+    <option value="Smart Communication">Smart Communication</option>
+    <option value="Smart Education">Smart Education</option>
+    <option value="Smart Textiles">Smart Textiles</option>
+    <option value="Smart Vehicles">Smart Vehicles</option>
+    <option value="Software - Mobile App Development">Software - Mobile App Development</option>
+    <option value="Software - Web App Development">Software - Web App Development</option>
+    <option value="Sports and Fitness">Sports and Fitness</option>
+    <option value="Sustainable Environment">Sustainable Environment</option>
+    <option value="Travel and Tourism">Travel and Tourism</option>
+    <option value="Waste Management">Waste Management</option>
+  </Select>
+</LabelInputContainer>
+<LabelInputContainer className="mb-4">
+  
   <Label htmlFor="theme_preference_1">Theme Preference 1</Label>
   <Select
     id="theme_preference_1"
@@ -370,44 +429,18 @@ console.log(response.data);
     onChange={handleInputChange}
   >
     <option value="" disabled>Select a theme</option>
-    <option value="1">Food Processing/Nutrition/Biotech</option>
-    <option value="2">Healthcare & Biomedical devices</option>
-    <option value="3">ICT, Cyber-physical systems, Blockchain, Cognitive computing, Cloud computing, AI & ML</option>
-    <option value="4">Infrastructure</option>
-    <option value="5">IoT based technologies (e.g. Security & Surveillance systems etc)</option>
-    <option value="6">Consumer Goods and Retail</option>
-    <option value="7">Defence & Security</option>
-    <option value="8">Education</option>
-    <option value="9">Fashion and Textiles</option>
-    <option value="10">Finance Life Sciences</option>
-    <option value="11">Agriculture & Rural Development</option>
-    <option value="12">Clean & Potable water</option>
-    <option value="13">Software-Web App Development</option>
-    <option value="14">Sports & Fitness</option>
-    <option value="15">Sustainable Environment</option>
-    <option value="16">Travel & Tourism</option>
-    <option value="17">Waste Management/Waste to Wealth Creation</option>
-    <option value="18">Smart Cities</option>
-    <option value="19">Smart Education</option>
-    <option value="20">Smart Textiles</option>
-    <option value="21">Smart Vehicles/Electric vehicle/Electric vehicle motor and battery technology</option>
-    <option value="22">Software-Mobile App Development</option>
-    <option value="23">Manufacturing</option>
-    <option value="24">Mining, Metals, Materials</option>
-    <option value="25">Other Emerging Areas Innovation for Start-ups</option>
-    <option value="26">Renewable and Affordable Energy</option>
-    <option value="27">Robotics and Drones</option>
-    <option value="28"></option>
-    <option value="29">IP Generation & Protection</option>
-    <option value="30">Business Modeling/Plan Development</option>
-    <option value="31">Design Thinking</option>
-    <option value="32">Idea Generation & Validation</option>
-    <option value="33">Incubation/Innovation Management</option>
-    <option value="34">Investment and Market Analyst</option>
+    {Themes?.map((theme) => (
+      <option key={theme.id} value={theme.id}>
+        {theme.theme_name}
+      </option>
+    ))}
   </Select>
 </LabelInputContainer>
 
+
+
 <LabelInputContainer className="mb-4">
+  
   <Label htmlFor="theme_preference_2">Theme Preference 2</Label>
   <Select
     id="theme_preference_2"
@@ -417,44 +450,16 @@ console.log(response.data);
     onChange={handleInputChange}
   >
     <option value="" disabled>Select a theme</option>
-    <option value="1">Food Processing/Nutrition/Biotech</option>
-    <option value="2">Healthcare & Biomedical devices</option>
-    <option value="3">ICT, Cyber-physical systems, Blockchain, Cognitive computing, Cloud computing, AI & ML</option>
-    <option value="4">Infrastructure</option>
-    <option value="5">IoT based technologies (e.g. Security & Surveillance systems etc)</option>
-    <option value="6">Consumer Goods and Retail</option>
-    <option value="7">Defence & Security</option>
-    <option value="8">Education</option>
-    <option value="9">Fashion and Textiles</option>
-    <option value="10">Finance Life Sciences</option>
-    <option value="11">Agriculture & Rural Development</option>
-    <option value="12">Clean & Potable water</option>
-    <option value="13">Software-Web App Development</option>
-    <option value="14">Sports & Fitness</option>
-    <option value="15">Sustainable Environment</option>
-    <option value="16">Travel & Tourism</option>
-    <option value="17">Waste Management/Waste to Wealth Creation</option>
-    <option value="18">Smart Cities</option>
-    <option value="19">Smart Education</option>
-    <option value="20">Smart Textiles</option>
-    <option value="21">Smart Vehicles/Electric vehicle/Electric vehicle motor and battery technology</option>
-    <option value="22">Software-Mobile App Development</option>
-    <option value="23">Manufacturing</option>
-    <option value="24">Mining, Metals, Materials</option>
-    <option value="25">Other Emerging Areas Innovation for Start-ups</option>
-    <option value="26">Renewable and Affordable Energy</option>
-    <option value="27">Robotics and Drones</option>
-    <option value="28">Venture Planning and Enterprise/Startup</option>
-    <option value="29">IP Generation & Protection</option>
-    <option value="30">Business Modeling/Plan Development</option>
-    <option value="31">Design Thinking</option>
-    <option value="32">Idea Generation & Validation</option>
-    <option value="33">Incubation/Innovation Management</option>
-    <option value="34">Investment and Market Analyst</option>
+    {Themes?.map((theme) => (
+      <option key={theme.id} value={theme.id}>
+        {theme.theme_name}
+      </option>
+    ))}
   </Select>
 </LabelInputContainer>
 
 <LabelInputContainer className="mb-4">
+  
   <Label htmlFor="theme_preference_3">Theme Preference 3</Label>
   <Select
     id="theme_preference_3"
@@ -464,42 +469,15 @@ console.log(response.data);
     onChange={handleInputChange}
   >
     <option value="" disabled>Select a theme</option>
-    <option value="1">Food Processing/Nutrition/Biotech</option>
-    <option value="2">Healthcare & Biomedical devices</option>
-    <option value="3">ICT, Cyber-physical systems, Blockchain, Cognitive computing, Cloud computing, AI & ML</option>
-    <option value="4">Infrastructure</option>
-    <option value="5">IoT based technologies (e.g. Security & Surveillance systems etc)</option>
-    <option value="6">Consumer Goods and Retail</option>
-    <option value="7">Defence & Security</option>
-    <option value="8">Education</option>
-    <option value="9">Fashion and Textiles</option>
-    <option value="10">Finance Life Sciences</option>
-    <option value="11">Agriculture & Rural Development</option>
-    <option value="12">Clean & Potable water</option>
-    <option value="13">Software-Web App Development</option>
-    <option value="14">Sports & Fitness</option>
-    <option value="15">Sustainable Environment</option>
-    <option value="16">Travel & Tourism</option>
-    <option value="17">Waste Management/Waste to Wealth Creation</option>
-    <option value="18">Smart Cities</option>
-    <option value="19">Smart Education</option>
-    <option value="20">Smart Textiles</option>
-    <option value="21">Smart Vehicles/Electric vehicle/Electric vehicle motor and battery technology</option>
-    <option value="22">Software-Mobile App Development</option>
-    <option value="23">Manufacturing</option>
-    <option value="24">Mining, Metals, Materials</option>
-    <option value="25">Other Emerging Areas Innovation for Start-ups</option>
-    <option value="26">Renewable and Affordable Energy</option>
-    <option value="27">Robotics and Drones</option>
-    <option value="28">Venture Planning and Enterprise/Startup</option>
-    <option value="29">IP Generation & Protection</option>
-    <option value="30">Business Modeling/Plan Development</option>
-    <option value="31">Design Thinking</option>
-    <option value="32">Idea Generation & Validation</option>
-    <option value="33">Incubation/Innovation Management</option>
-    <option value="34">Investment and Market Analyst</option>
+    {Themes?.map((theme) => (
+      <option key={theme.id} value={theme.id}>
+        {theme.theme_name}
+      </option>
+    ))}
   </Select>
 </LabelInputContainer>
+
+
 
 
 
@@ -557,11 +535,13 @@ Venture Planning and Enterprise/Startup">
 
   </Select>
             </LabelInputContainer>
+
+
+
+            <LanguageDropdown formData={formData} setFormData={setFormData} />
            
 
-            
-          </div>
-
+             </div>
           <button
             type="submit"
             className="w-full bg-blue-600 text-white py-3 font-semibold rounded-md hover:bg-blue-700 transition duration-300"

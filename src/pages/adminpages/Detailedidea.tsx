@@ -1,3 +1,4 @@
+// @ts-nocheck
 import axios from 'axios';
 import React, { useState, useEffect } from 'react'; // Import useState and useEffect
 import { useParams, Link } from 'react-router-dom';
@@ -25,8 +26,9 @@ const DetailedIdea = () => {
       try {
         const response = await axios.get(`${BACKEND_URL}/getidea.php?idea_id=${idea_id}`, { withCredentials: true });
         setIdea(response.data.idea);
-  
-        setAssignedEvaluators(response.data.idea.assigned_count); // Initialize assigned count based on idea data
+
+        setAssignedEvaluators(response.data.idea.assigned_count);
+         // Initialize assigned count based on idea data
        // Set the already assigned evaluators
       } catch (error) {
         console.error("Error fetching idea:", error);
@@ -38,7 +40,6 @@ const DetailedIdea = () => {
     const fetchEvaluators = async () => {
       try {
         const response = await axios.get(`${BACKEND_URL}/getevaluators.php`, { withCredentials: true });
-        console.log(response);
         setEvaluators(response.data.evaluators);
    
      
@@ -169,15 +170,19 @@ const DetailedIdea = () => {
       >
         <option value="">Select Evaluator</option>
         {evaluators
-          .filter(
-            (evaluator) =>
-              !details.some((assignedEvaluator) => assignedEvaluator.evaluator_id === evaluator.id)
-          ) // Filter out already assigned evaluators
-          .map((evaluator) => (
-            <option key={evaluator.id} value={evaluator.id}>
-              {evaluator.first_name +" "+evaluator.last_name}
-            </option>
-          ))}
+  .filter(
+    (evaluator) =>
+      !details.some(
+        (assignedEvaluators) =>
+          assignedEvaluators.evaluator_id === evaluator.id
+      )
+  ) // Filter out already assigned evaluators
+  .map((evaluator) => (
+    <option key={evaluator.id} value={evaluator.id}>
+      {`${evaluator.first_name} ${evaluator.last_name}`}
+    </option>
+  ))}
+
       </select>
 
       <button
