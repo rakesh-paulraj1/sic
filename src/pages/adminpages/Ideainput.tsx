@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import { Input } from '../../components/ui/Input';
@@ -23,6 +23,17 @@ const Ideainput = () => {
     status_id: '3', 
     theme_id: '',
   });
+  useEffect(()=>{
+    const checkadmin=()=>{
+      const role=localStorage.getItem("role");
+      if(role!="admin"){
+      navigate("/");
+      }
+    }
+    checkadmin();
+  },[])
+
+  
   const [csvData, setCsvData] = useState([]);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 

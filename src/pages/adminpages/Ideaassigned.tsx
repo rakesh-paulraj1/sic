@@ -35,15 +35,15 @@ export function Ideaassigned() {
   const navigate = useNavigate(); // Use useNavigate for navigation
 
   useEffect(() => {
-    const authToken = Cookies.get("auth_token1");
     const evaluatorId = localStorage.getItem("evaluator_id");
 
     // Check if both auth_token1 and evaluator_id exist in localStorage
-    if (!authToken || !evaluatorId) {
-      setError("You are not authenticated or evaluator ID is missing.");
-      setLoading(false);
-      navigate("/"); // Redirect to login if either is missing
-      return;
+   
+    const checkevaluator=()=>{
+      const role=localStorage.getItem("role");
+      if(role!="evaluator"){
+      navigate("/");
+      }
     }
 
     // If both exist, fetch assigned ideas
@@ -62,6 +62,7 @@ export function Ideaassigned() {
         setError("Failed to fetch ideas");
         setLoading(false);
       });
+      checkevaluator();
   }, [navigate]);
 
   const handleProfileClick = () => {

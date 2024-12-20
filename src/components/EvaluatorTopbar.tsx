@@ -24,9 +24,10 @@ const EvaluatorTopbar = () => {
                 throw new Error(response.data.error);
             }
             
-            localStorage.removeItem("evaluator_id");
-            localStorage.removeItem("auth_token1");
+          
+          
             localStorage.removeItem("role");
+            localStorage.removeItem("user_id");
             navigate('/'); 
         } catch (error) {
             console.error('Error during logout', error);
@@ -37,7 +38,7 @@ const EvaluatorTopbar = () => {
     <div className="flex items-center justify-between w-full">
     <div className="flex items-center space-x-6">
     <Link to={"/evaluatordashboard"}><div className="text-lg font-bold">Evaluator Dashboard</div></Link>
-    <Link to={"/ideaassigned"}><div className="text-lg font-bold">Idea Assigned</div></Link>
+    {/* <Link to={"/evaluatordashboard"}><div className="text-lg font-bold">Idea Assigned</div></Link> */}
 </div>
       <div className="relative">
         <button
@@ -50,16 +51,11 @@ const EvaluatorTopbar = () => {
           <div className="absolute right-0 mt-2 w-40 bg-white shadow-lg rounded">
             <ul>
               <li>
-                <button
-                  className="block px-4 py-2 text-black hover:bg-gray-200"
-                  onClick={handleProfileClick}
-                >
-                  Profile
-                </button>
+               
               </li>
               <li>
                 <button
-                  className="block px-4 py-2 text-black hover:bg-gray-200"
+                  className="block w-full px-4 py-2 text-black hover:bg-gray-200"
                   onClick={handleLogout}
                 >
                   Logout

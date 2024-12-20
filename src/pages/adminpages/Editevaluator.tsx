@@ -6,10 +6,9 @@ import { LabelInputContainer } from '../adminpages/Login';
 import { useState, useEffect } from 'react';
 import { BACKEND_URL } from "../../../config";
 import axios from 'axios';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams,useNavigate } from 'react-router-dom';
 import { Select  } from '../../components/ui/Input';
 import { toast } from 'react-toastify';
-import LanguageDropdown from '../../components/Languagedropdown';
 const EditEvaluator = () => {
   const [formData, setFormData] = useState({
     email: '',
@@ -38,8 +37,14 @@ const EditEvaluator = () => {
   const { evaluator_id } = useParams();
   console.log(evaluator_id);
   const [errors, setErrors] = useState({});
-
+const navigate = useNavigate();
   useEffect(() => {
+    const checkadmin=()=>{
+      const role=localStorage.getItem("role");
+      if(role!="admin"){
+      navigate("/");
+      }
+    }
     const fetchEvaluatorData = async () => {
       try {
         const response = await axios.post(`${BACKEND_URL}/getevaluator1.php`, {
@@ -58,6 +63,7 @@ const EditEvaluator = () => {
     };
 
     fetchEvaluatorData();
+    checkadmin();
   }, []);
 
   const validateForm = () => {

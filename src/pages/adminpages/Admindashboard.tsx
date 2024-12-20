@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { useEffect, useState } from 'react';
 import { BACKEND_URL } from '../../../config';
-import { Link} from 'react-router-dom';
+import { Link,useNavigate} from 'react-router-dom';
 import Topbar from '../../components/Topbar';
 import Navbar from '../../components/Navbar';
 import axios from 'axios';
@@ -15,6 +15,7 @@ const AdminDashboard = () => {
   const [evaluators, setEvaluators] = useState([]);
   const [stats, setStats] = useState({
   });
+  const navigate=useNavigate();
   const fetchEvaluators = async () => {
     try {
       const response = await axios.get(`${BACKEND_URL}/getevaluator.php`, {
@@ -35,7 +36,7 @@ const AdminDashboard = () => {
   };
   const checkuserrole=()=>{
 if(localStorage.getItem('role')!='admin'){
-  window.location.href = '/';
+ navigate("/");
   }}
   useEffect(() => {
  checkuserrole( )

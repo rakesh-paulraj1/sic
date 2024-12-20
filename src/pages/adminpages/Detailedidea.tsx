@@ -1,10 +1,11 @@
 // @ts-nocheck
 import axios from 'axios';
 import React, { useState, useEffect } from 'react'; // Import useState and useEffect
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link,useNavigate } from 'react-router-dom';
 import { BACKEND_URL } from '../../../config';
 import Navbar from '../../components/Navbar';
 import Topbar from '../../components/Topbar';
+
 
 const DetailedIdea = () => {
   const { idea_id } = useParams();
@@ -21,7 +22,15 @@ const DetailedIdea = () => {
     setShowVerifyDialog(true);
 
   };
+  const navigate=useNavigate();
   useEffect(() => {
+
+     const checkadmin=()=>{
+      const role=localStorage.getItem("role");
+      if(role!="admin"){
+      navigate("/");
+      }
+    }
     const fetchIdea = async () => {
       try {
         const response = await axios.get(`${BACKEND_URL}/getidea.php?idea_id=${idea_id}`, { withCredentials: true });
@@ -34,7 +43,8 @@ const DetailedIdea = () => {
         console.error("Error fetching idea:", error);
       }
     };
-    
+
+   
 
     // Fetch evaluators list
     const fetchEvaluators = async () => {
@@ -57,6 +67,7 @@ const DetailedIdea = () => {
         console.log("error")
       }
     }
+    checkadmin();
     fetchdetails();
     fetchIdea();
     fetchEvaluators();
@@ -157,7 +168,7 @@ const DetailedIdea = () => {
             <p className=" text-xl font-medium text-gray-600"><strong>Type:</strong></p>
             <p className=" text-md text-gray-800">{idea.type}</p>
           </div>
-          {idea.assigned_count < 3 && idea.assigned_count >1 ? (
+          {idea.assigned_count < 3 && idea.assigned_count >0 ? (
   <div className="space-y-2">
     <p className="text-xl font-medium text-gray-600">
       <strong>Add Evaluator:</strong>
@@ -174,7 +185,7 @@ const DetailedIdea = () => {
     (evaluator) =>
       !details.some(
         (assignedEvaluators) =>
-          assignedEvaluators.evaluator_id === evaluator.id
+          assignedEvaluators.evaluator_id == evaluator.id
       )
   ) // Filter out already assigned evaluators
   .map((evaluator) => (

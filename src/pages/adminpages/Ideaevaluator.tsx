@@ -4,7 +4,7 @@ import Navbar from '../../components/Navbar';
 import Topbar from '../../components/Topbar';
 import axios from 'axios';
 import { BACKEND_URL } from '../../../config';
-import { Link } from 'react-router-dom';
+import { Link,useNavigate } from 'react-router-dom';
 import { toast,ToastContainer } from 'react-toastify';
 import Papa from 'papaparse';
 import { Input } from '../../components/ui/Input';
@@ -31,6 +31,7 @@ const Ideaevaluator = () => {
     evaluator_id_2: '',
     evaluator_id_3: '',
   });
+  const navigate=useNavigate();
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -39,10 +40,8 @@ const Ideaevaluator = () => {
         skipEmptyLines: true,
         complete: function (results) {
           if (results.data.length > 0) {
-            // Parse the CSV data as an array of objects
             const parsedData = results.data as Array<Record<string, string | number>>;
   
-            // Map the parsed data and handle evaluator IDs and other fields
             const enrichedData = parsedData.map((row) => ({
               idea_title: row.idea_title || '', // Use provided or default values
               school: row.school || '',
@@ -195,6 +194,9 @@ const getThemes = async () => {
     console.error('Error fetching themes:', error);
   }
 };
+const handleRemoveEvaluator = (evaluatorId: string) => {
+  setSelectedEvaluators((prevState) => prevState.filter((id) => id !== evaluatorId));
+};
 
 // Function to download themes data (id and theme_name)
 const downloadThemeCSV = () => {
@@ -246,7 +248,15 @@ const convertThemesToCSV = (data) => {
     link.click(); // Trigger download
     document.body.removeChild(link); // Clean up by removing the link
   };
-
+  const handleEvaluatorSelect = (evaluatorId: string) => {
+    if (selectedEvaluators.includes(evaluatorId)) {
+      setSelectedEvaluators((prevState) => prevState.filter((id) => id !== evaluatorId));
+    } else if (selectedEvaluators.length < 3) {
+      setSelectedEvaluators((prevState) => [...prevState, evaluatorId]);
+    } else {
+      toast.error('You can select up to three evaluators only.');
+    }
+  };
 
   // const convertToCSV = (data) => {
   //   const headers = Object.keys(data[0]).join(','); // Get column headers from the keys of the first object
@@ -280,7 +290,7 @@ const convertThemesToCSV = (data) => {
       console.log(errors);
    return;
     }
-    console.log(combinedData);
+  
     try {
       const response = await axios.post(`${BACKEND_URL}/csv_ideas_mapper.php`,combinedData , {
         withCredentials: true,
@@ -312,11 +322,10 @@ const handleSubmit = () => {
       idea_id: currentIdeaId,
       evaluator_ids: selectedEvaluators,
     }).then((response) => {
-      console.log(response.data);
+      console.log(response);
       if(response.data.success){
         toast.success('Evaluators assigned successfully');
       }
-      
       setIsDialogOpen(false);
       window.location.reload();
       setSelectedEvaluators([]);
@@ -330,6 +339,12 @@ const handleSubmit = () => {
 
   
   useEffect(() => {
+    const checkadmin=()=>{
+      const role=localStorage.getItem("role");
+      if(role!="admin"){
+      navigate("/");
+      }
+    }
     const fetchIdeas = async () => {
       try {
         const response = await axios.get(`${BACKEND_URL}/getideas.php`, { withCredentials: true });
@@ -338,10 +353,11 @@ const handleSubmit = () => {
         console.error('Error fetching ideas:', error);
       }
     };
-
+checkadmin();
     fetchIdeas();
     fetchEvaluators();
     getThemes();
+    
   }, []);
 
   return (
@@ -451,50 +467,56 @@ const handleSubmit = () => {
 
 
 {isDialogOpen && (
-            <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
-              <div className="bg-white p-6 rounded shadow-lg w-96">
-                <h2 className="text-xl mb-4">Assign Evaluators</h2>
-
-                {/* Dropdown to select evaluators */}
-                <select
-  className="w-full border px-3 py-2 mb-4"
-  multiple
-  value={selectedEvaluators}
-  onChange={(e) => {
-    const selectedOptions = Array.from(e.target.selectedOptions, (option) => option.value);
-    if (selectedOptions.length <= 3) {
-      setSelectedEvaluators(selectedOptions);
-      console.log(selectedEvaluators);
-    }
-  }}
->
-  <option value="">Select Evaluators (Choose 3)</option>
-  {evaluators.map((evaluator) => (
-    <option key={evaluator.id} value={evaluator.id}>
-      {evaluator.first_name + " " + evaluator.last_name}
-    </option>
-  ))}
-</select>
-
-
-                {/* Dialog actions */}
-                <div className="flex justify-end space-x-4">
-                  <button
-                    onClick={handleCloseDialog}
-                    className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleSubmit}
-                    className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                  >
-                    Submit
-                  </button>
-                </div>
+        <div className="fixed top-0 left-0 right-0 bottom-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
+          <div className="bg-white p-6 rounded-lg w-[400px] h-[500px]">
+            <h2 className="text-xl mb-4">Assign Evaluators</h2>
+            <div>
+              <h3 className="font-semibold mb-2">Choose Evaluators</h3>
+              <select
+                onChange={(e) => handleEvaluatorSelect(e.target.value)}
+                className="w-full border border-gray-300 rounded p-2 mb-4"
+              >
+                <option value="">Select an evaluator</option>
+                {evaluators.map((evaluator) => (
+                  <option key={evaluator.id} value={evaluator.id}>
+                    {evaluator.first_name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="mt-4">
+              <h4 className="font-medium mb-2">Selected Evaluators:</h4>
+              <div className="flex flex-wrap gap-2">
+                {selectedEvaluators.map((id) => {
+                  const evaluator = evaluators.find((e) => e.id === id);
+                  return (
+                    <div
+                      key={id}
+                      className="flex items-center bg-blue-200 text-gray-800 px-3 py-1 rounded-full"
+                    >
+                      <span>{evaluator?.first_name}</span>
+                      <button
+                        onClick={() => handleRemoveEvaluator(id)}
+                        className="ml-2 text-red-500 hover:text-red-700"
+                      >
+                        X
+                      </button>
+                    </div>
+                  );
+                })}
               </div>
             </div>
-          )}
+            <div className="mt-4">
+              <button onClick={handleSubmit} className="bg-blue-500 text-white py-2 px-4 rounded mr-2">
+                Submit
+              </button>
+              <button onClick={handleCloseDialog} className="bg-red-500 text-white py-2 px-4 rounded">
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
         </div>
       </div>
       <ToastContainer/>
